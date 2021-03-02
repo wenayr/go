@@ -8,7 +8,7 @@ import (
 var port = ":8000"
 
 func main() {
-	http.HandleFunc("/hello", func(writer http.ResponseWriter, request *http.Request) {
+	http.HandleFunc("/golab/hello", func(writer http.ResponseWriter, request *http.Request) {
 		fmt.Fprintf(writer, "Hello")
 	})
 	http.ListenAndServe(port, nil)
