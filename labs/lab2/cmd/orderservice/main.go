@@ -13,10 +13,6 @@ import (
 
 var port = ":8000"
 
-type kitty struct {
-	Name string `json:"name"`
-}
-
 func main() {
 	log.SetFormatter(&log.JSONFormatter{})
 	file, err := os.OpenFile("./log/my.log", os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0666)

@@ -3,7 +3,10 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/gorilla/mux"
+	log "github.com/sirupsen/logrus"
 	"net/http"
+	"time"
 )
 
 var port = ":8000"
@@ -29,31 +32,20 @@ func StructToString(a any) string {
 }
 
 func main() {
-	buf := kitty{
-		kitty2{
-			name21:  "2dsd3",
-			Name31:  "32dsd3",
-			NOName1: "3dsd2"},
-		"mmmmm",
-		"Mya",
-		"Mya3"}
-	byt, _ := json.Marshal(buf)
 
-	id := tId{"st"}
-	order := tOrder2{
-		tOrder{
-			id,
-			tMenuItem{
-				id,
-				345},
-		},
-		434,
-		434}
-
-	http.HandleFunc("/hello", func(writer http.ResponseWriter, request *http.Request) {
-		fmt.Fprint(writer, string(byt)+"\n "+StructToString(order)+StructToString(byt))
+	Router()
+	http.HandleFunc("/hello", func(writer http.ResponseWriter, _ *http.Request) {
+		fmt.Fprint(writer, "gggggggggggggg")
 	})
+	http.HandleFunc("/hello1", func(writer http.ResponseWriter, _ *http.Request) {
+		fmt.Fprint(writer, "111111111111")
+	})
+
 	http.ListenAndServe(port, nil)
+}
+
+func handleHelloWorld(write http.ResponseWriter, _ *http.Request) {
+	fmt.Fprint(write, "Hello!!!!!!")
 }
 
 type kitty2 struct {
@@ -86,4 +78,28 @@ type tOrder2 struct {
 	tOrder
 	OrderedAtTimestamp int `json:"orderedAtTimestamp"`
 	Cost               int `json:"cost"`
+}
+
+func Router() http.Handler {
+	r := mux.NewRouter()
+	s := r.PathPrefix("").Subrouter()
+	s.HandleFunc("/hello3", handleHelloWorld).Methods(http.MethodGet)
+
+	return logMiddleware(r)
+}
+
+func logMiddleware(h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		beginTime := time.Now()
+		h.ServeHTTP(w, r)
+
+		endTime := time.Now()
+		log.WithFields(log.Fields{
+			"method":      r.Method,
+			"url":         r.URL,
+			"remoteAddr":  r.RemoteAddr,
+			"userAgent":   r.UserAgent(),
+			"elapsedTime": endTime.Sub(beginTime),
+		}).Info("got a new request")
+	})
 }
