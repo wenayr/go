@@ -33,7 +33,7 @@ func StructToString(a any) string {
 
 func main() {
 
-	Router()
+	var link:=Router()
 	http.HandleFunc("/hello", func(writer http.ResponseWriter, _ *http.Request) {
 		fmt.Fprint(writer, "gggggggggggggg")
 	})
@@ -41,7 +41,7 @@ func main() {
 		fmt.Fprint(writer, "111111111111")
 	})
 
-	http.ListenAndServe(port, nil)
+	http.ListenAndServe(port,link)
 }
 
 func handleHelloWorld(write http.ResponseWriter, _ *http.Request) {
